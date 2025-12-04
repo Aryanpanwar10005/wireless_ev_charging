@@ -37,7 +37,7 @@ A wireless charging prototype for electric vehicles using Inductive Power Transf
 ### Installation
 1. Clone this repository
 ```bash
-   git clone https://github.com/Aryanpanwar10005/wireless-ev-charging.git
+   git clone https://github.com/Aryanpanwar10005/wireless_ev_charging.git
 ```
 2. Open `wireless_ev_charging.ino` in Arduino IDE
 3. Select your board: **Tools → Board → Arduino Uno**
