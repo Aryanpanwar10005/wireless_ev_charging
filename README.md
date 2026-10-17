@@ -1,187 +1,133 @@
-# Wireless EV Charging System 🔋⚡
+# Wireless EV Charging System
 
-A wireless charging prototype for electric vehicles using Inductive Power Transfer (IPT) technology with Arduino microcontroller. This project demonstrates practical implementation of wireless power transfer principles for sustainable transportation solutions.
+A wireless charging prototype for electric vehicles based on inductive power transfer (IPT). The prototype uses a dual-spot parking setup: a transmitter coil passes power across an air gap to a receiver coil through resonant inductive coupling, and an Arduino handles vehicle detection, switching and monitoring.
 
-## ✨ Features
+This repository contains the Arduino control sketch, the wiring notes and the coil details. As published, the sketch reads one IR sensor and drives one relay, so it controls a single charging spot.
 
-- ⚡ 85% power transfer efficiency
-- 🤖 Automated vehicle detection using IR sensors
-- 📊 Real-time power monitoring via LCD display
-- 🔧 Resonant circuit design for optimal power transfer
-- 💡 Smart charging system with automatic start/stop
-- 🛡️ Safety features with emergency shutdown
-- 📈 Efficiency monitoring and calculation
+## Publication
 
-## 🛠️ Hardware Components
+I co-authored a paper on this work, published in JETIR (Journal of Emerging Technologies and Innovative Research), Vol. 13, Issue 4, April 2026: [JETIR2604872](https://www.jetir.org/view?paper=JETIR2604872).
 
-- Arduino Uno/Nano
-- Transmitter Coil (Primary)
-- Receiver Coil (Secondary)
-- IR Sensors (Vehicle Detection)
-- 16x2 LCD Display
-- 5V Relay Module
+## Features
+
+- Vehicle detection with an IR sensor, confirmed for one second before charging starts
+- Relay-switched charging that starts when a vehicle arrives and stops when it leaves
+- Voltage sensing through a resistor divider and current sensing with an ACS712
+- Live voltage, current and power readout on a 16x2 LCD and the Serial Monitor
+- Resonant (tuned LC) transmitter and receiver coils
+- Safety cut-offs for over-current and low voltage, with LED and buzzer alerts
+
+**Note on efficiency:** the efficiency figure on the LCD comes from `calculateEfficiency()`, which currently returns a simulated placeholder value, not a measurement. Measuring real efficiency needs both input-side and output-side power readings, which this sketch does not take yet.
+
+## Hardware Components
+
+- Arduino Uno or Nano
+- Transmitter coil (primary) and receiver coil (secondary)
+- IR sensor (vehicle detection)
+- 16x2 LCD display
+- 5V relay module
 - Power MOSFETs
-- Capacitors and Inductors for resonant circuit
-- ACS712 Current Sensor
+- Capacitors and inductors for the resonant circuit
+- ACS712 current sensor
 - Voltage divider resistors (10KΩ, 2KΩ)
-- DC Power Supply (12V)
+- 12V DC power supply
 - Rectifier diodes
 - LED indicators
 - Buzzer (optional)
 
-## 📋 Software Requirements
+## Software Requirements
 
-- Arduino IDE 1.8+ or 2.0+
-- LiquidCrystal Library (built-in with Arduino IDE)
+- Arduino IDE 1.8+ or 2.x
+- LiquidCrystal library (included with the Arduino IDE)
 
-## 📥 Installation
+## Installation
 
-1. Clone this repository
-```bash
-git clone https://github.com/Aryanpanwar10005/wireless_ev_charging.git
-```
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Aryanpanwar10005/wireless_ev_charging.git
+   ```
+2. Open `wireless_ev_charging.ino` in the Arduino IDE.
+3. Select your board: Tools → Board → Arduino Uno.
+4. Select your port: Tools → Port.
+5. Upload to the board.
 
-2. Open `wireless_ev_charging.ino` in Arduino IDE
-3. Select your board: Tools → Board → Arduino Uno
-4. Select your COM port: Tools → Port → (your port)
-5. Upload to your Arduino board
+## Circuit Connections
 
-## 🔌 Circuit Connections
+| Component | Arduino pin |
+|---|---|
+| IR sensor (active LOW) | D2 |
+| Relay module (charging control) | D7 |
+| Charging LED | D8 |
+| Ready LED | D9 |
+| Buzzer | D10 |
+| Voltage divider output | A0 |
+| ACS712 output | A1 |
+| LCD (RS, E, D4, D5, D6, D7) | 12, 11, 5, 4, 3, 6 |
 
-- Connect the transmitter coil to the primary circuit with resonant capacitor
-- Connect the receiver coil to the secondary circuit
-- Wire IR sensor to Arduino digital pin 2
-- Connect 16x2 LCD display to Arduino (pins 12, 11, 5, 4, 3, 6)
-- Connect relay module to pin 7 for charging control
-- Wire voltage sensor to analog pin A0
-- Connect current sensor (ACS712) to analog pin A1
-- Ensure proper coil alignment for maximum efficiency
+Connect the transmitter coil to the primary circuit with its resonant capacitor, and the receiver coil to the rectifier and load. Full wiring, coil and safety notes are in [circuit.md](circuit.md).
 
-## 🚀 Usage
+## Usage
 
-- Power on the system
-- LCD will display "System Ready - Waiting..."
-- Place the receiver coil near the transmitter (2-5cm distance)
-- IR sensors will detect presence and automatically start charging
-- Monitor real-time voltage, current, power, and efficiency on LCD
-- System automatically stops when object is removed
-- View detailed data on Serial Monitor (9600 baud)
+1. Power on the system. The LCD shows "System Ready / Waiting...".
+2. Place the receiver coil close to the transmitter coil (the sketch notes 2-5 cm as a typical gap).
+3. When the IR sensor detects a vehicle, the relay switches the charging circuit on.
+4. Voltage, current and power are shown on the LCD and sent to the Serial Monitor (9600 baud).
+5. Charging stops when the vehicle is removed, and the LCD shows the session time.
 
-## 📊 Technical Specifications
+Calibrate the voltage divider ratio and the current sensor constants in the sketch for your hardware before relying on the readings.
 
-- Operating Frequency: ~85 kHz (resonant frequency)
-- Power Transfer Efficiency: 85% average
-- Power Output: Up to 15W
-- Detection Range: 5-10cm (IR sensor)
-- Coil Distance: Optimal 2-5cm
-- Input Voltage: 12V DC
-- Maximum Current: 3A (with safety cutoff)
+## Design Parameters
 
-## 🎯 Project Achievements
+These are the values used in the sketch and the circuit notes:
 
-- Successfully implemented IPT technology using readily available components
-- Achieved 85% efficiency through optimized coil design and resonant frequency tuning
-- Integrated smart detection and real-time monitoring system
-- Demonstrated practical application of wireless power transfer for EV charging
-- Implemented safety features including over-current protection and emergency stop
+- Resonant frequency target: about 85 kHz, set by f = 1 / (2π√(LC))
+- Coils: about 20 turns of 18-22 AWG copper wire, 10-15 cm diameter
+- Typical coil gap: 2-5 cm
+- Supply: 12V DC
+- Over-current cut-off: 3 A
+- Low-voltage cut-off: 3 V
+- Display and serial update interval: 500 ms
 
-## 🔬 How It Works
+## How It Works
 
-The system uses resonant inductive coupling for efficient power transfer:
+- **Transmitter circuit:** high-frequency AC drives the transmitter coil, which produces an alternating magnetic field.
+- **Receiver circuit:** the receiver coil picks up the field, and the induced AC is rectified to DC for the load.
+- **Resonant tuning:** capacitors tune both coils to the same frequency so that power transfers across the gap.
+- **Control:** the Arduino detects the vehicle, switches the relay, reads voltage and current, and shuts down on faults.
 
-- **Transmitter Circuit**: High-frequency AC power → Transmitter coil → Magnetic field generation
-- **Receiver Circuit**: Magnetic field reception → Receiver coil → AC voltage → Rectification → DC output
-- **Resonant Tuning**: Capacitors tuned to match transmitter and receiver frequencies for maximum power transfer
-- **Control System**: Arduino monitors and controls the entire charging process
+## Safety Features
 
-### Key Components Function:
-- **Transmitter Coil**: Creates alternating magnetic field
-- **Receiver Coil**: Captures magnetic energy and converts to electrical power
-- **Resonant Capacitors**: Maximize power transfer at specific frequency
-- **Relay**: Controls power flow to charging circuit
-- **Sensors**: Monitor voltage, current, and vehicle presence
+- Over-current cut-off (3 A)
+- Low-voltage cut-off
+- Emergency stop routine on a fault: relay off, buzzer alert and an LCD message
+- Automatic shutdown when the vehicle is removed
+- LED and buzzer status alerts
 
-## 📈 Performance Metrics
+## Future Work
 
-- Peak Efficiency: 87%
-- Average Efficiency: 85%
-- Power Transfer Range: 2-5cm optimal, up to 8cm functional
-- Response Time: < 1 second for vehicle detection
-- Accuracy: ±2% voltage reading, ±5% current reading
+- Measure input and output power to calculate real efficiency
+- Higher power output
+- Temperature monitoring and thermal management
+- Foreign object detection (FOD)
+- Battery management system (BMS) integration
+- Remote monitoring over Bluetooth or Wi-Fi
+- Data logging to an SD card
 
-## 🧪 Testing & Validation
+## What I Learned
 
-- Tested with various coil distances (2cm to 10cm)
-- Measured efficiency at different power levels (5W to 15W)
-- Validated automated detection system reliability (99% success rate)
-- Confirmed stable power delivery under varying load conditions
-- Verified safety features respond correctly to fault conditions
+- Electromagnetic induction and resonant circuit tuning
+- Power electronics for wireless power transfer
+- Sensor interfacing and calibration
+- Embedded control with safety interlocks
 
-## 💡 Learning Outcomes
+## Acknowledgments
 
-- Practical understanding of electromagnetic induction principles
-- Experience with resonant circuit design and frequency tuning
-- Power electronics and efficient energy transfer techniques
-- Embedded systems integration and real-time control
-- Sensor interfacing and data acquisition
-- Implementation of safety features in power systems
-
-## 🚧 Future Enhancements
-
-- Increase power output for faster charging (50W+)
-- Implement multiple receiver coils for simultaneous charging
-- Add smartphone app for remote monitoring via Bluetooth/WiFi
-- Optimize coil design using Finite Element Analysis (FEA)
-- Add temperature monitoring and thermal management
-- Implement foreign object detection (FOD) for enhanced safety
-- Include battery management system (BMS) integration
-- Data logging to SD card for analysis
-- PID control for stable power delivery
-
-## 🛡️ Safety Features
-
-- Over-current protection (3A maximum)
-- Low voltage cutoff
-- Emergency stop function
-- Visual and audible alerts (LED + Buzzer)
-- Automatic shutdown on vehicle removal
-- Real-time monitoring and diagnostics
-
-## 👨‍💻 Author
-
-**Aryan Panwar**
-- Electronics & Communication Engineering Student
-- MIET Meerut (2022-2026)
-- 📧 Email: [aryanpanwar10005@gmail.com](mailto:aryanpanwar10005@gmail.com)
-- 💼 LinkedIn: [aryan-panwar-b5322b269](https://www.linkedin.com/in/aryan-panwar-b5322b269)
-- 🐙 GitHub: [@Aryanpanwar10005](https://github.com/Aryanpanwar10005)
-
-## 🙏 Acknowledgments
-
-- MIET Meerut for laboratory facilities and project support
-- Arduino community for excellent documentation and resources
-- Open-source community for libraries and tools
-- Faculty advisors for guidance and mentorship
-
-## 📞 Contact
-
-For questions, suggestions, or collaboration opportunities:
-- Open an issue in this repository
-- Email: [aryanpanwar10005@gmail.com](mailto:aryanpanwar10005@gmail.com)
-- Connect on LinkedIn
-
-## ⭐ Support
-
-If you found this project interesting or helpful:
-- ⭐ Star this repository
-- 🔄 Share with others interested in wireless charging technology
-- 🐛 Report bugs or suggest improvements
-- 🤝 Contribute to the project
+- MIET Meerut for laboratory facilities and faculty guidance
+- My co-authors on the JETIR paper
+- The Arduino community for documentation and libraries
 
 ---
 
-**Project Year:** 2025  
-**Technology Stack:** Arduino | Embedded C | Power Electronics | Wireless Power Transfer  
-**Status:** Completed ✅
+**Project year:** 2025 · **Stack:** Arduino, Embedded C, power electronics, wireless power transfer · **Status:** completed prototype
 
-*"Innovation in wireless power transfer for a sustainable future"*
+Built by [Aryan Panwar](https://aryanpanwar.in).
