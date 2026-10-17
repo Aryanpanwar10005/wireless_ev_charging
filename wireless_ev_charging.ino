@@ -9,15 +9,14 @@
  * 
  * Description:
  * This project implements a wireless charging system for electric vehicles
- * using Inductive Power Transfer (IPT) technology. The system achieves 85%
- * power transfer efficiency with automated vehicle detection and real-time
- * monitoring.
+ * using Inductive Power Transfer (IPT) technology, with automated vehicle
+ * detection and real-time monitoring.
  * 
  * Features:
  * - Automated vehicle detection using IR sensors
  * - Real-time monitoring via 16x2 LCD display
  * - Wireless power transfer using resonant inductive coupling
- * - Efficiency monitoring and calculation
+ * - Efficiency display (a simulated placeholder until input and output power are measured)
  * - Safety features with automatic shutdown
  * 
  * License: MIT License
